@@ -11,29 +11,30 @@ export async function getDBConnection() {
 export async function setupDatabase() {
   const db = await getDBConnection();
 
+  await db.exec(`DROP TABLE IF EXISTS inventory;`);
+
   await db.exec(`
-    CREATE TABLE IF NOT EXISTS inventory (
+    CREATE TABLE inventory (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT,
       price TEXT,
-      image TEXT
+      image TEXT,
+      genre TEXT,
+      stock INTEGER,
+      rating REAL
     );
   `);
 
-  const row = await db.get("SELECT COUNT(*) AS count FROM inventory");
-
-  if (row.count === 0) {
-    await db.run(
-      `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
-      ["Silent Hill 2", "$45.99", "/images/silenthill2.png"]
-    );
-    await db.run(
-      `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
-      ["Grand Theft Auto 6", "$70", "/images/GTA6.png"]
-    );
-    await db.run(
-      `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
-      ["Destiny 3", "$70", "/images/Destiny3.png"]
-    );
-  }
+  await db.run(
+    `INSERT INTO inventory (title, price, image, genre, stock, rating) VALUES (?, ?, ?, ?, ?, ?)`,
+    ["Silent Hill 2", "$45.99", "/images/silenthill2.png", "Horror", 15, 4.8]
+  );
+  await db.run(
+    `INSERT INTO inventory (title, price, image, genre, stock, rating) VALUES (?, ?, ?, ?, ?, ?)`,
+    ["Grand Theft Auto 6", "$70.00", "/images/GTA6.png", "Action", 50, 5.0]
+  );
+  await db.run(
+    `INSERT INTO inventory (title, price, image, genre, stock, rating) VALUES (?, ?, ?, ?, ?, ?)`,
+    ["Destiny 3", "$70.00", "/images/Destiny3.png", "FPS", 30, 4.5]
+  );
 }
