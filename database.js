@@ -25,15 +25,15 @@ export async function setupDatabase() {
   if (row.count === 0) {
     await db.run(
       `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
-      ["Silent Hill 2", "$45.99", "/images/silent-hill.jpg"]
+      ["Silent Hill 2", "$45.99", "/images/silenthill2.png"]
     );
     await db.run(
       `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
-      ["Grand Theft Auto 6", "$70", "/images/gta6.jpg"]
+      ["Grand Theft Auto 6", "$70", "/images/GTA6.png"]
     );
     await db.run(
       `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
-      ["Destiny 3", "$70", "/images/destiny.jpg"]
+      ["Destiny 3", "$70", "/images/Destiny3.png"]
     );
   }
 }
