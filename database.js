@@ -1,39 +1,39 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
+export async function getDBConnection() {
+  return open({
+    filename: './inventory.db',
+    driver: sqlite3.Database
+  });
+}
 
-export const setupDatabase = () => {
-    return open ({
-        filename: './public/database/inventory.db',
-        driver: sqlite3.Database
-    }).then (db => {
-        return db.exec(`
-            CREATE TABLE IF NOT EXISTS inventory (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                genre TEXT,
-                cost DECIMAL(10,2),
-                stock INTEGER,
-                rating DECIMAL(3,1),
-                image_url TEXT
-                )
-            `).then(() => {
-                return db.run(`
-                    INSERT INTO inventory (name, genre, cost, stock, rating, image_url)
-                    VALUES
-                        ('Silent Hill 2', 'Horror', 45.99, 15, 4.7, '/images/silenthill2.png'),
-                        ('Grand Theft Auto 6', 'Action', 70, 21, 5.0, '/images/GTA6.png'),
-                        ('Destiny 3', 'Looter', 70, 11, 4.3, '/images/Destiny3.png')
-                    `);
-            }).then(() => {
-                console.log('Database setup complete. ');
-            });
-    });
-};
+export async function setupDatabase() {
+  const db = await getDBConnection();
 
-export const getDBConnection = () => {
-    return open({
-        filename: './public/database/inventory.db',
-        driver: sqlite3.Database
-    });
-};
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS inventory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT,
+      price TEXT,
+      image TEXT
+    );
+  `);
+
+  const row = await db.get("SELECT COUNT(*) AS count FROM inventory");
+
+  if (row.count === 0) {
+    await db.run(
+      `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
+      ["Silent Hill 2", "$45.99", "/images/silent-hill.jpg"]
+    );
+    await db.run(
+      `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
+      ["Grand Theft Auto 6", "$70", "/images/gta6.jpg"]
+    );
+    await db.run(
+      `INSERT INTO inventory (title, price, image) VALUES (?, ?, ?)`,
+      ["Destiny 3", "$70", "/images/destiny.jpg"]
+    );
+  }
+}
